@@ -26,6 +26,24 @@ void printDict(map<string,size_t>& Dict){
   }
 }
 
+void writeStats(map<string,size_t>& Dict){
+  fstream file;
+  file.open("count.csv", ios_base::out | std::ios_base::trunc);
+  file.close();
+
+  fstream file2;
+  file2.open("count.csv", std::ios_base::app);
+
+  if (file2.is_open()){
+    for(auto it = Dict.cbegin(); it != Dict.cend(); ++it)
+    {
+      string line = it->first + "\t" + to_string(it->second) + "\n";
+      file2 << line;
+    }
+  }
+  file2.close();
+}
+
 void countNames (stack<string>& nameList, map<string,size_t>& Dict)
 {
   while (nameList.size() > 1)
@@ -45,39 +63,40 @@ void countNames (stack<string>& nameList, map<string,size_t>& Dict)
 
 int main() 
 {
-    time_t t2;
-    time (&t2); stack<string> nameList; map<string, size_t> Dict;
-    ifstream myFile ("count.csv");
-    string line;
-    size_t total = 0;
-    if (myFile.is_open()){
-      while (myFile.good()){
-        myFile >> line;
-        auto name = line.substr(0, line.find(','));
-        nameList.push(name);
-        total++;
-      }
+  time_t t2;
+  time (&t2); stack<string> nameList; map<string, size_t> Dict;
+  ifstream myFile ("log.csv");
+  string line;
+  size_t total = 0;
+  if (myFile.is_open()){
+    while (myFile.good()){
+      myFile >> line;
+      auto name = line.substr(0, line.find(','));
+      nameList.push(name);
+      total++;
     }
+  }
 
-    countNames(nameList, Dict);
-    total--;
-    getline (cin, line);
-    int i = 0;
-    fstream file;
-    file.open("count.csv", std::ios_base::app);
-    time_t tt;struct tm * ti; //initialize
-    if (file.is_open()){
-      while(line != "q")
-      {
-        i++;
-        time (&tt); ti = localtime(&tt);
-        char output[30]; strftime(output, 30, "%m/%d/%Y,%H:%M:%S", ti);
-        file << endl << line << "," << output << "," << diffTime(t2,tt);
-        cout << "Death this session: " << i << "\t" << "Death total: " << total + i<< endl;
-        nameList.push(line);
-        countNames(nameList, Dict);
-        getline (cin, line);
-      }
+  countNames(nameList, Dict);
+  total--;
+  getline (cin, line);
+  int i = 0;
+  fstream file;
+  file.open("log.csv", std::ios_base::app);
+  time_t tt;struct tm * ti; //initialize
+  if (file.is_open()){
+    while(line != "q")
+    {
+      i++;
+      time (&tt); ti = localtime(&tt);
+      char output[30]; strftime(output, 30, "%m/%d/%Y,%H:%M:%S", ti);
+      file << endl << line << "," << output << "," << diffTime(t2,tt);
+      cout << "Death this session: " << i << "\t" << "Death total: " << total + i<< endl;
+      nameList.push(line);
+      countNames(nameList, Dict);
+      getline (cin, line);
     }
-    file.close();
+  }
+  file.close();
+  writeStats(Dict);
 }
