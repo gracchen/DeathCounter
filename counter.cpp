@@ -15,15 +15,12 @@ string diffTime(time_t start, time_t end) {
   int hours = min / 60;
   char buffer [10];
   sprintf(buffer, "%02d:%02d:%02d",int(hours),int(min%60),int(sec%60));
-  //printf("%02d:%02d:%02d\n",int(hours),int(min%60),int(sec%60));
   return buffer;
 }
 
 void printDict(map<string,size_t>& Dict){
   for(auto it = Dict.cbegin(); it != Dict.cend(); ++it)
-  {
       cout << it->first << ": " << it->second << "\n";
-  }
 }
 
 void writeStats(map<string,size_t>& Dict){
@@ -50,20 +47,17 @@ void countNames (stack<string>& nameList, map<string,size_t>& Dict)
   {
     string key_to_find = nameList.top();
     auto it = Dict.find(key_to_find);
-    if (it != Dict.end()) {
+    if (it != Dict.end())
             it->second++;
-        }
-    else {
+    else
       Dict.insert(make_pair(key_to_find, 1));
-    }
     nameList.pop();
   }
-  //printDict(Dict); cout<< endl;
 }
 
 int main() 
 {
-  cout << "Welcome to Death Counter. \nEnter an enemy to start, q to quit." << endl;
+  cout << "Welcome to Death Counter. \nEnter enemy upon death, *enemy upon victory, q to quit." << endl;
   time_t t2;
   time (&t2); stack<string> nameList; map<string, size_t> Dict;
   ifstream myFile ("log.csv");
@@ -79,7 +73,6 @@ int main()
         if (line[i] == ',') break;
         name += line[i];
       }
-      //cout << name << "\n";
       nameList.push(name);
       total++;
     }
@@ -110,4 +103,6 @@ int main()
   file.close();
   writeStats(Dict);
   printDict(Dict);
+  cout << "Press ENTER to close...";
+  std::cin.get(); 
 }
