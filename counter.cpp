@@ -73,7 +73,8 @@ int main()
         if (line[i] == ',') break;
         name += line[i];
       }
-      nameList.push(name);
+      if (name.size() != 0)
+        nameList.push(name);
       total++;
     }
   }
@@ -86,6 +87,7 @@ int main()
   file.open("log.csv", std::ios_base::app);
   time_t tt;struct tm * ti; //initialize
   if (file.is_open()){
+    file << "\n";
     while(line != "q")
     {
       i++;
