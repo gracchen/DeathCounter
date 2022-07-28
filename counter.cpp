@@ -9,18 +9,19 @@
 #include <map>
 using namespace std;
 
+
 struct Stats
 {
-  size_t deaths;
-  size_t wins;
+  unsigned short deaths;
+  unsigned short wins;
 } stats;
 
 string diffTime(time_t start, time_t end) {
-  int sec = (int)difftime(end, start);
-  int min = sec / 60;
-  int hours = min / 60;
-  char buffer [10];
-  sprintf(buffer, "%02d:%02d:%02d",int(hours),int(min%60),int(sec%60));
+  unsigned short sec = (long)difftime(end, start);
+  unsigned short min = sec / 60;
+  unsigned __int8 hours = min / 60;
+  char buffer [8];
+  sprintf(buffer, "%02d:%02d:%02d",short(hours),short(min%60),short(sec%60));
   return buffer;
 }
 
@@ -47,9 +48,9 @@ void writeStats(map<string,Stats>& Dict){
   file2.close();
 }
 
-size_t countNames (stack<string>& nameList, map<string,Stats>& Dict)
+unsigned int countNames (stack<string>& nameList, map<string,Stats>& Dict)
 {
-  int deaths = 0;
+  unsigned int deaths = 0;
   while (nameList.size() > 1)
   {
     string key_to_find = nameList.top();
@@ -99,7 +100,7 @@ int main()
       getline(myFile, line);
       //myFile >> line;
       name = "";
-      for (size_t i = 0; i < line.size(); i++)
+      for (unsigned short i = 0; i < line.size(); i++)
       {
         if (line[i] == ',') break;
         name += line[i];
@@ -109,9 +110,9 @@ int main()
     }
   }
   
-  size_t total = countNames(nameList, Dict);
+  unsigned int total = countNames(nameList, Dict);
   getline (cin, line);
-  int deathCount = 0; int winCount = 0;
+  unsigned short deathCount = 0; unsigned short winCount = 0;
   fstream file;
   file.open("log.csv", std::ios_base::app);
   time_t tt;struct tm * ti; //initialize
@@ -123,7 +124,7 @@ int main()
       }
       else if (line.size() != 0) {
       time (&tt); ti = localtime(&tt);
-      char output[30]; strftime(output, 30, "%m/%d/%Y,%H:%M:%S", ti);
+      char output[20]; strftime(output, 20, "%m/%d/%Y,%H:%M:%S", ti);
       file << endl << line << "," << output << "," << diffTime(t2,tt);
       nameList.push(line);
       countNames(nameList, Dict);
@@ -142,7 +143,7 @@ int main()
   file << "\n";
   file.close();
   writeStats(Dict);
-  //printDict(Dict);
+  //print shortDict(Dict);
   //cout << "Press ENTER to close...";
   //std::cin.get(); 
 }
